@@ -28,7 +28,15 @@ fs.readFile('day12/input.txt', 'utf-8', (_err: any, input: any) => {
       for (let j = 0; j < connections.length; j++) {
         const [connection] = connections[j].filter((c: string) => c != end);
         if (connection.match((/^[a-z]*$/))) {
-          if (!currentPath.includes(connection)) {
+          let smallCaves = currentPath.filter((cave: string) => cave.match((/^[a-z]*$/)));
+          let double = false;
+          for (let k = 0; k < smallCaves.length - 1; k++) {
+            if (smallCaves.includes(smallCaves[k], k + 1)) {
+              double = true
+            }
+
+          }
+          if (!currentPath.includes(connection) || !double) {
             newPaths.push([...currentPath, connection]);
           }
         } else {
