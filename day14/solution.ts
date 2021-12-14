@@ -2,38 +2,49 @@ import fs from 'fs';
 
 fs.readFile('day14/input.txt', 'utf-8', (_err: any, input: any) => {
   let data: string[] = input.split('\n').filter((s: string) => s != '');
-  let result = data[0];
-  const steps = 10;
+  let result: any = {};
+  for (let i = 1; i < data[0].length; i++) {
+    let char = data[0].slice(i - 1, i + 1)
+    if (result[char] == undefined) {
+      result[char] = 1;
+    } else {
+      result[char] += 1;
+    }
+  }
+  const steps = 40;
   const combinations: any = {};
   for (let i = 1; i < data.length; i++) {
     let line: string[] = data[i].split('->').map((s: string) => s.trim());
 
-    combinations[line[0]] = line[1] + line[0][1];
+    combinations[line[0]] = [line[0][0] + line[1], line[1] + line[0][1]];
 
   }
-
   for (let _ = 0; _ < steps; _++) {
-    let newResult: string = result[0];
-    for (let i = 0; i < result.length - 1; i++) {
-      const element = result.slice(i, i + 2);
-      newResult += combinations[element];
+    let newResult: any = {};
+    for (const element of Object.keys(result)) {
+      let count: number = result[element]
+      for (let i = 0; i < 2; i++) {
+        let char = combinations[element][i];
+        if (newResult[char] == undefined) {
+          newResult[char] = count;
+        } else {
+          newResult[char] += count;
+        }
+      }
     }
     result = newResult;
   }
-
-  let minCount = 1e9;
-  let maxCount = 0;
-  let characters = new Set([...result]);
-
-  for (const char of characters) {
-    let count = [...result].filter((s: string) => s == char).length;
-    if (count > maxCount) {
-      maxCount = count;
-    }
-    if (count < minCount) {
-      minCount = count;
+  let occurences: any = {};
+  for (const key of Object.keys(result)) {
+    let count = result[key]
+    let char = key[1];
+    if (occurences[char] == undefined) {
+      occurences[char] = count;
+    } else {
+      occurences[char] += count;
     }
 
   }
-  console.log(maxCount - minCount)
+  let counts: number[] = Object.values(occurences);
+  console.log(Math.max(...counts) - Math.min(...counts))
 });
