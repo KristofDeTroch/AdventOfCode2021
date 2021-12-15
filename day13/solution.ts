@@ -42,9 +42,9 @@ function printDots(dots: number[][]) {
     let string = "";
     for (let x = 0; x <= X; x++) {
       if (dots.filter((dot: number[]) => dot[0] == x && dot[1] == y).length == 1) {
-        string += '#';
+        string += '@';
       } else {
-        string += ".";
+        string += " ";
       }
     }
     console.log(string)
