@@ -4,6 +4,7 @@ fs.readFile('day16/input.txt', 'utf-8', (_err: any, input: any) => {
   const data: string = [...input].filter((s: string) => s != '\n').map((s: string) => parseInt(s, 16).toString(2).padStart(4, '0')).join('')
   let b = new BITS(data);
   console.log(b.getVersion());
+  console.log(b.getValue());
 
 
 });
@@ -61,7 +62,34 @@ class BITS {
         }
       }
 
-      this.value = 0;
+
+      switch (this.type) {
+        case 0:
+          this.value = this.bits.reduce((prev, curr) => curr.getValue() + prev, 0)
+          break;
+        case 1:
+          this.value = this.bits.reduce((prev, curr) => curr.getValue() * prev, 1)
+          break;
+        case 2:
+          this.value = Math.min(...this.bits.map((b: BITS) => b.getValue()))
+          break;
+        case 3:
+          this.value = Math.max(...this.bits.map((b: BITS) => b.getValue()))
+          break;
+        case 5:
+          this.bits[0].getValue() > this.bits[1].getValue() ? this.value = 1 : this.value = 0;
+          break;
+        case 6:
+          this.bits[0].getValue() < this.bits[1].getValue() ? this.value = 1 : this.value = 0;
+          break;
+        case 7:
+          this.bits[0].getValue() == this.bits[1].getValue() ? this.value = 1 : this.value = 0;
+          break;
+        default:
+          this.value = 0;
+          break;
+      }
+
     }
 
   }
