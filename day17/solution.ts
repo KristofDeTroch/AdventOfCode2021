@@ -15,7 +15,7 @@ fs.readFile('day17/input.txt', 'utf-8', (_err: any, input: any) => {
   const targetY = [minY, maxY];
   let highest = 0;
   let count = 0;
-  for (let x = 1; x <= maxX; x++) {
+  for (let x = 17; x <= maxX; x++) {
     for (let y = minY; y < 120; y++) {
       let velX = x;
       let velY = y;
