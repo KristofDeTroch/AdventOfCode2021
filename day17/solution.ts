@@ -13,10 +13,10 @@ fs.readFile('day17/input.txt', 'utf-8', (_err: any, input: any) => {
 
   const targetX = [minX, maxX];
   const targetY = [minY, maxY];
-  console.log(targetX, targetY)
   let highest = 0;
-  for (let x = 1; x < 200; x++) {
-    for (let y = 0; y < 20000; y++) {
+  let count = 0;
+  for (let x = 1; x <= maxX; x++) {
+    for (let y = minY; y < 120; y++) {
       let velX = x;
       let velY = y;
       let currentHighest = 0;
@@ -27,6 +27,7 @@ fs.readFile('day17/input.txt', 'utf-8', (_err: any, input: any) => {
           if (currentHighest > highest) {
             highest = currentHighest;
           }
+          count += 1;
           break;
         }
         currentXPos += velX;
@@ -42,5 +43,6 @@ fs.readFile('day17/input.txt', 'utf-8', (_err: any, input: any) => {
     }
   }
   console.log(highest)
+  console.log(count)
 
 });
