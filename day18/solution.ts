@@ -2,17 +2,30 @@ import fs from 'fs';
 
 fs.readFile('day18/test.txt', 'utf-8', (_err: any, input: any) => {
   const data: string[] = input.split('\n').filter((s: string) => s != '');
-  for (let i = 0; i < data.length; i++) {
-    console.log('(--------------------------------------------------)')
-    console.log(data[i])
-    const snail = new Snail(data[i]);
-    snail.reduceExplode(1)
-    console.log(snail.toString())
+  let snail = new Snail(data[0]);
+  for (let i = 1; i < data.length; i++) {
+    console.log('  ' +snail.toString())
+    let newSnail = new Snail(data[i])
+    console.log('+ ' +newSnail.toString())
+    snail = addSnails(snail,newSnail);
+    console.log('= ' + snail.toString()+'\n')
+    
+    
 
   }
 
 
 });
+
+
+function addSnails(lS: Snail, rS: Snail): Snail{
+  lS.reduce();
+  const newSnail = new Snail(`[${lS.toString()},${rS.toString()}]`)
+  newSnail.reduce();
+  return newSnail;
+}
+
+
 
 class Snail {
 
@@ -43,12 +56,24 @@ class Snail {
 
   }
 
+  public reduce(){
+    let reduce = true;
+    while(reduce){
+      console.log(this.toString())
+      if(this.reduceExplode(1)){
+        continue;
+      }      
+      reduce = this.reduceSplit();
+    }
+  }
+  
   public reduceExplode(level: number): explosion {
-    if (level == 5) {
-      if (typeof this.left != 'number' || typeof this.right != 'number') {
-        throw Error;
+    if (level >= 5) {
+      if (!(typeof this.left != 'number' || typeof this.right != 'number')) {
+        console.log(this.toString())
+        return { left: this.left, center: true, right: this.right }
+        
       }
-      return { left: this.left, center: true, right: this.right }
     }
     if (typeof this.left != 'number') {
       let explosion = this.left.reduceExplode(level + 1);
@@ -90,6 +115,32 @@ class Snail {
     return false;
   }
 
+
+  public reduceSplit():boolean{
+    let left = false;
+    if(typeof this.left == 'number'){
+      if (this.left > 9){
+        this.left = new Snail(`[${Math.floor(this.left/2)},${Math.ceil(this.left/2)}]`)
+        left = true;
+      }
+    } else {
+      left = this.left.reduceSplit();
+    }
+    if(left){
+      return true;
+    }
+    let right = false;
+    if(typeof this.right == 'number'){
+      if (this.right > 9){
+        this.right = new Snail(`[${Math.floor(this.right/2)},${Math.ceil(this.right/2)}]`)
+        right = true;
+      }
+    } else {
+      right = this.right.reduceSplit();
+    }
+
+    return right;
+  }
   public addRight(value: number) {
     if (typeof this.right == 'number') {
       this.right += value;
