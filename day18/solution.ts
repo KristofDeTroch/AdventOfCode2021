@@ -2,15 +2,26 @@ import fs from 'fs';
 
 fs.readFile('day18/input.txt', 'utf-8', (_err: any, input: any) => {
   const data: string[] = input.split('\n').filter((s: string) => s != '');
-  let snail = new Snail(data[0]);
-  for (let i = 1; i < data.length; i++) {
-    let newSnail = new Snail(data[i])
-    snail = addSnails(snail,newSnail);
+  let finalSnail = new Snail(data[0]);
+  let max = 0;
+  for (let i = 0; i < data.length; i++) {
+    let currentSnail = new Snail(data[i]);
+    if(i>0){
+      finalSnail = addSnails(finalSnail,currentSnail);
+    }
+    for(let j = i+1; j<data.length; j++){
+      let tempSnail = new Snail(data[j])
+      let sum = Math.max(addSnails(tempSnail,currentSnail).getValue(),addSnails(currentSnail,tempSnail).getValue());
+      if(sum> max){
+        max = sum
+      }
+    }
     
     
     
   }
-  console.log(snail.getValue())
+  console.log(finalSnail.getValue());
+  console.log(max)
 
 
 });
