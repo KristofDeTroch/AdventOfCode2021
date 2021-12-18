@@ -1,25 +1,22 @@
 import fs from 'fs';
 
-fs.readFile('day18/test.txt', 'utf-8', (_err: any, input: any) => {
+fs.readFile('day18/input.txt', 'utf-8', (_err: any, input: any) => {
   const data: string[] = input.split('\n').filter((s: string) => s != '');
   let snail = new Snail(data[0]);
   for (let i = 1; i < data.length; i++) {
-    console.log('  ' +snail.toString())
     let newSnail = new Snail(data[i])
-    console.log('+ ' +newSnail.toString())
     snail = addSnails(snail,newSnail);
-    console.log('= ' + snail.toString()+'\n')
     
     
-
+    
   }
+  console.log(snail.getValue())
 
 
 });
 
 
 function addSnails(lS: Snail, rS: Snail): Snail{
-  lS.reduce();
   const newSnail = new Snail(`[${lS.toString()},${rS.toString()}]`)
   newSnail.reduce();
   return newSnail;
@@ -41,16 +38,18 @@ class Snail {
       length += this.left.getLength();
       s = s.slice(this.left.getLength() + 2);
     } else {
-      this.left = parseInt(s[1]);
-      length += 1;
-      s = s.slice(3)
+      let seperatorIndex = s.indexOf(',')
+      this.left = parseInt(s.slice(1,seperatorIndex));
+      length += seperatorIndex-1;
+      s = s.slice(seperatorIndex+1)
     }
     if (s[0] == '[') {
       this.right = new Snail(s);
       length += this.right.getLength();
     } else {
-      this.right = parseInt(s[0]);
-      length += 1;
+      let seperatorIndex = s.indexOf(']')
+      this.right = parseInt(s.slice(0,seperatorIndex));
+      length += seperatorIndex;
     }
     this.length = length;
 
@@ -59,7 +58,6 @@ class Snail {
   public reduce(){
     let reduce = true;
     while(reduce){
-      console.log(this.toString())
       if(this.reduceExplode(1)){
         continue;
       }      
@@ -68,12 +66,11 @@ class Snail {
   }
   
   public reduceExplode(level: number): explosion {
-    if (level >= 5) {
-      if (!(typeof this.left != 'number' || typeof this.right != 'number')) {
-        console.log(this.toString())
-        return { left: this.left, center: true, right: this.right }
-        
+    if (level == 5) {
+      if (typeof this.left != 'number' || typeof this.right != 'number') {
+        throw Error;
       }
+      return { left: this.left, center: true, right: this.right }
     }
     if (typeof this.left != 'number') {
       let explosion = this.left.reduceExplode(level + 1);
@@ -115,7 +112,6 @@ class Snail {
     return false;
   }
 
-
   public reduceSplit():boolean{
     let left = false;
     if(typeof this.left == 'number'){
@@ -141,6 +137,7 @@ class Snail {
 
     return right;
   }
+
   public addRight(value: number) {
     if (typeof this.right == 'number') {
       this.right += value;
@@ -156,6 +153,23 @@ class Snail {
       this.left.addLeft(value);
     }
   }
+
+public getValue():number{
+  let result = 0;
+  if(typeof this.left == 'number'){
+    result += 3*this.left;
+  }else{
+    result += 3*this.left.getValue();
+  }
+  if(typeof this.right == 'number'){
+    result += 2*this.right;
+  }else{
+    result += 2*this.right.getValue();
+  }
+
+
+  return result;
+}
 
   public getLength() {
     return this.length
